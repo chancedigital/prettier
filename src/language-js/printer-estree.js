@@ -4127,9 +4127,11 @@ function printArgumentsList(path, options, print) {
   ) {
     return concat([
       "(",
+      parenSpace,
       path.call(print, "arguments", 0),
       ", ",
       path.call(print, "arguments", 1),
+      parenSpace,
       ")"
     ]);
   }
@@ -4168,9 +4170,9 @@ function printArgumentsList(path, options, print) {
     return group(
       concat([
         "(",
-        indent(concat([line, concat(printedArguments)])),
+        indent(concat([parenLine, concat(printedArguments)])),
         maybeTrailingComma,
-        line,
+        parenLine,
         ")"
       ]),
       { shouldBreak: true }
