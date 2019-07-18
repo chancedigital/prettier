@@ -11,14 +11,14 @@ exports[`API getSupportInfo() with version 0.0.0 -> 1.0.0 1`] = `
         \\"default\\": true,
         \\"type\\": \\"boolean\\",
       },
-      \\"parenSpacing\\": Object {
-        \\"default\\": false,
-        \\"type\\": \\"boolean\\",
-      },
 +     \\"jsxBracketSameLine\\": Object {
 +       \\"default\\": false,
 +       \\"type\\": \\"boolean\\",
 +     },
+      \\"parenSpacing\\": Object {
+        \\"default\\": false,
+        \\"type\\": \\"boolean\\",
+      },
 +     \\"parser\\": Object {
 +       \\"choices\\": Array [
 +         \\"flow\\",
