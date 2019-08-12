@@ -44,6 +44,56 @@ const link = <a href="example.com">http://example.com</a>;
 
 -->
 
+#### MDX: Adjacent JSX elements should be allowed in mdx ([#6332] by [@JounQin])
+
+Previous versions would not format adjacent JSX elements in mdx, this has been fixed in this version.
+
+<!-- prettier-ignore -->
+```jsx
+// Input
+<Hello>
+    test   <World />   test
+</Hello>123
+
+// Output (Prettier stable)
+SyntaxError: Unexpected token (3:9)
+  1 | <Hello>
+  2 |     test   <World />   test
+> 3 | </Hello>123
+    |         ^
+
+// Output (Prettier master)
+<Hello>
+  test <World /> test
+</Hello>123      ^
+
+
+// Input
+<Hello>
+    test   <World />   test
+</Hello>
+<Hello>
+    test   <World />   test
+</Hello>123
+
+// Output (Prettier stable)
+SyntaxError: Adjacent JSX elements must be wrapped in an enclosing tag. Did you want a JSX fragment <>...</>? (4:1)
+  2 |     test   <World />   test
+  3 | </Hello>
+> 4 | <Hello>
+    | ^
+  5 |     test   <World />   test
+  6 | </Hello>123
+
+// Output (Prettier master)
+<Hello>
+  test <World /> test
+</Hello>
+<Hello>
+  test <World /> test
+</Hello>123
+```
+
 #### TypeScript: Print comment following a JSX element with generic ([#6209] by [@duailibe])
 
 Previous versions would not print this comment, this has been fixed in this version.
@@ -261,6 +311,88 @@ useEffect(
 
 This version updates the TypeScript parser to correctly handle JSX text with double slashes (`//`). In previous versions, this would cause Prettier to crash.
 
+#### CLI: Add `--only-changed` flag ([#5910] by [@g-harel])
+
+Flag used with `--write` to avoid re-checking files that were not changed since they were last written (with the same formatting configuration).
+
+#### HTML, Vue: Don't break the template element included in a line shorter than print-width([#6284] by [@sosukesuzuki])
+
+Previously, even if the line length is shorter than print-width is Prettier breaks the line with a template element.
+
+<!-- prettier-ignore -->
+```html
+// Input
+<template>
+  <template>foo</template>
+</template>
+
+// Output (Prettier stable)
+<template>
+  <template
+    >foo</template
+  >
+</template>
+
+// Output (Prettier master)
+<template>
+  <template>foo</template>
+</template>
+```
+
+#### JavaScript: Fix breaks indentation and idempotency when an arrow function that args include object pattern is passed to a function as parameter. ([#6301] by [@sosukesuzuki])
+
+Previously, Prettier collapses strangely, when an arrow function that args include object pattern is passed to a function as parameter. Also, it breaks idempotency. Please see [#6294](https://github.com/prettier/prettier/issues/6294) for detail.
+
+<!-- prettier-ignore -->
+```js
+// Input
+foo(
+  ({
+    a,
+
+    b
+  }) => {}
+);
+
+// Output (Prettier stable)
+foo(({ a,
+  b }) => {});
+
+// Output (Prettier master)
+foo(
+  ({
+    a,
+
+    b
+  }) => {}
+);
+```
+
+#### TypeScript: Fix specific union type breaks after opening parenthesis, but not before closing ([#6307] by [@sosukesuzuki])
+
+Previously, union type that put with `as` , `keyof`, `[]`, other union(`|`) and intersection(`&`) breaks after opening parenthesis, but not before closing. Please see [#6303](https://github.com/prettier/prettier/issues/6303) for detail.
+
+<!-- prettier-ignore-->
+```ts
+// Input
+const foo = [abc, def, ghi, jkl, mno, pqr, stu, vwx, yz] as (
+  | string
+  | undefined
+)[];
+
+// Prettier (stable)
+const foo = [abc, def, ghi, jkl, mno, pqr, stu, vwx, yz] as (
+  | string
+  | undefined)[];
+
+// Prettier (master)
+const foo = [abc, def, ghi, jkl, mno, pqr, stu, vwx, yz] as (
+  | string
+  | undefined
+)[];
+```
+
+[#5910]: https://github.com/prettier/prettier/pull/5910
 [#6186]: https://github.com/prettier/prettier/pull/6186
 [#6206]: https://github.com/prettier/prettier/pull/6206
 [#6209]: https://github.com/prettier/prettier/pull/6209
@@ -269,6 +401,12 @@ This version updates the TypeScript parser to correctly handle JSX text with dou
 [#6236]: https://github.com/prettier/prettier/pull/6236
 [#6270]: https://github.com/prettier/prettier/pull/6270
 [#6289]: https://github.com/prettier/prettier/pull/6289
+[#6332]: https://github.com/prettier/prettier/pull/6332
+[#6284]: https://github.com/prettier/prettier/pull/6284
+[#6301]: https://github.com/prettier/prettier/pull/6301
+[#6307]: https://github.com/prettier/prettier/pull/6307
 [@duailibe]: https://github.com/duailibe
 [@gavinjoyce]: https://github.com/gavinjoyce
 [@sosukesuzuki]: https://github.com/sosukesuzuki
+[@g-harel]: https://github.com/g-harel
+[@jounqin]: https://github.com/JounQin
