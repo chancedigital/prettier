@@ -1,5 +1,4 @@
 "use strict";
-
 const assert = require("assert");
 
 // TODO(azz): anything that imports from main shouldn't be in a `language-*` dir.
@@ -2467,7 +2466,6 @@ function printPathNoParens(path, options, print, args) {
 
       path.each(childPath => {
         const i = childPath.getName();
-
         parts.push(print(childPath));
 
         if (i < expressions.length) {
@@ -2486,7 +2484,7 @@ function printPathNoParens(path, options, print, args) {
           const quasi = childPath.getValue();
           const indentSize = getIndentSize(quasi.value.raw, tabWidth);
 
-          let printed = expressions[i];
+          let printed = concat([parenSpace, expressions[i], parenSpace]);
 
           if (!isSimple) {
             // Breaks at the template element boundaries (${ and }) are preferred to breaking
@@ -2501,8 +2499,6 @@ function printPathNoParens(path, options, print, args) {
                 indent(concat([parenLine, printed])),
                 parenLine
               ]);
-            } else {
-              printed = concat([parenSpace, printed, parenSpace]);
             }
           }
 
@@ -3921,6 +3917,7 @@ function printJestEachTemplateLiteral(node, expressions, options) {
    * ${1} | ${2} | ${3}
    * ${2} | ${1} | ${3}
    */
+  const parenSpace = options.parenSpacing ? " " : "";
   const headerNames = node.quasis[0].value.raw.trim().split(/\s*\|\s*/);
   if (
     headerNames.length > 1 ||
@@ -3930,6 +3927,7 @@ function printJestEachTemplateLiteral(node, expressions, options) {
     const stringifiedExpressions = expressions.map(
       doc =>
         "${" +
+        parenSpace +
         printDocToString(
           doc,
           Object.assign({}, options, {
@@ -3937,6 +3935,7 @@ function printJestEachTemplateLiteral(node, expressions, options) {
             endOfLine: "lf"
           })
         ).formatted +
+        parenSpace +
         "}"
     );
 
@@ -4229,6 +4228,7 @@ function printArgumentsList(path, options, print) {
       "(",
       ifBreak(parenLine, parenSpace),
       concat(printedExpanded),
+      ifBreak(parenLine, parenSpace),
       ")"
     ]);
 
