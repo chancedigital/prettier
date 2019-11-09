@@ -18,6 +18,7 @@ const {
     line,
     hardline,
     softline,
+    getParensSpacing,
     group,
     fill,
     indent,
@@ -84,6 +85,7 @@ function shouldPrintComma(options) {
 }
 
 function genericPrint(path, options, print) {
+  const { parenLine, parenSpace } = getParensSpacing(options);
   const node = path.getValue();
 
   /* istanbul ignore if */
@@ -276,7 +278,13 @@ function genericPrint(path, options, print) {
       if (!node.nodes) {
         return node.value;
       }
-      return concat(["(", concat(path.map(print, "nodes")), ")"]);
+      return concat([
+        "(",
+        parenSpace,
+        concat(path.map(print, "nodes")),
+        parenSpace,
+        ")"
+      ]);
     }
     case "media-feature": {
       return maybeToLowerCase(
@@ -407,7 +415,13 @@ function genericPrint(path, options, print) {
       return concat([
         maybeToLowerCase(node.value),
         node.nodes && node.nodes.length > 0
-          ? concat(["(", join(", ", path.map(print, "nodes")), ")"])
+          ? concat([
+              "(",
+              parenSpace,
+              join(", ", path.map(print, "nodes")),
+              parenSpace,
+              ")"
+            ])
           : ""
       ]);
     }
@@ -717,9 +731,9 @@ function genericPrint(path, options, print) {
             node.groups[0].groups[0].value.startsWith("data:")))
       ) {
         return concat([
-          node.open ? path.call(print, "open") : "",
+          node.open ? concat([path.call(print, "open"), parenSpace]) : "",
           join(",", path.map(print, "groups")),
-          node.close ? path.call(print, "close") : ""
+          node.close ? concat([parenSpace, path.call(print, "close")]) : ""
         ]);
       }
 
@@ -737,6 +751,15 @@ function genericPrint(path, options, print) {
         return group(indent(fill(res)));
       }
 
+      if (node.groups.length === 0) {
+        return group(
+          concat([
+            node.open ? path.call(print, "open") : "",
+            node.close ? path.call(print, "close") : ""
+          ])
+        );
+      }
+
       const isSCSSMapItem = isSCSSMapItemNode(path);
 
       return group(
@@ -744,7 +767,7 @@ function genericPrint(path, options, print) {
           node.open ? path.call(print, "open") : "",
           indent(
             concat([
-              softline,
+              parenLine,
               join(
                 concat([",", line]),
                 path.map(childPath => {
@@ -778,7 +801,7 @@ function genericPrint(path, options, print) {
               ? ","
               : ""
           ),
-          softline,
+          parenLine,
           node.close ? path.call(print, "close") : ""
         ]),
         {

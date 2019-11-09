@@ -85,6 +85,7 @@ function group(contents, opts) {
     id: opts.id,
     contents: contents,
     break: !!opts.shouldBreak,
+    addedLine: !!opts.addedLine,
     expandedStates: opts.expandedStates
   };
 }
@@ -188,6 +189,16 @@ const literalline = concat([
 const cursor = { type: "cursor", placeholder: Symbol("cursor") };
 
 /**
+ * @param {object} options - Prettier options
+ * @returns {object}
+ */
+function getParensSpacing(options) {
+  const parenSpace = options.parenSpacing ? " " : "";
+  const parenLine = options.parenSpacing ? line : softline;
+  return { parenLine, parenSpace };
+}
+
+/**
  * @param {Doc} sep
  * @param {Doc[]} arr
  * @returns Doc
@@ -234,6 +245,7 @@ module.exports = {
   softline,
   hardline,
   literalline,
+  getParensSpacing,
   group,
   conditionalGroup,
   fill,
