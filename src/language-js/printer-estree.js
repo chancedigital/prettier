@@ -418,8 +418,8 @@ function printTernaryOperator(path, options, print, operatorOptions) {
         forceNoIndent ? concat(parts) : indent(concat(parts)),
         operatorOptions.afterParts(breakClosingParen)
       )
-    ),
-    { addedLine: breakClosingParen }
+    )
+    // { addedLine: breakClosingParen }
   );
 }
 
@@ -589,12 +589,7 @@ function printPathNoParens(path, options, print, args) {
           !parent.computed)
       ) {
         return group(
-          concat([
-            "(",
-            indent(concat([parenLine, concat(parts)])),
-            parenLine,
-            ")"
-          ])
+          concat([indent(concat([parenLine, concat(parts)])), parenLine])
         );
       }
 

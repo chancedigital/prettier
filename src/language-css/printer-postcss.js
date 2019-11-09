@@ -607,7 +607,8 @@ function genericPrint(path, options, print) {
           (isAdditionNode(iNode) || isSubtractionNode(iNode)) &&
           i === 0 &&
           (iNextNode.type === "value-number" || iNextNode.isHex) &&
-          (parentParentNode && isColorAdjusterFuncNode(parentParentNode)) &&
+          parentParentNode &&
+          isColorAdjusterFuncNode(parentParentNode) &&
           !hasEmptyRawBefore(iNextNode);
 
         const requireSpaceBeforeOperator =
@@ -749,15 +750,6 @@ function genericPrint(path, options, print) {
         }
 
         return group(indent(fill(res)));
-      }
-
-      if (node.groups.length === 0) {
-        return group(
-          concat([
-            node.open ? path.call(print, "open") : "",
-            node.close ? path.call(print, "close") : ""
-          ])
-        );
       }
 
       const isSCSSMapItem = isSCSSMapItemNode(path);
